@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ single_product.product_name }} | GlowLuxe{% endblock %}
+
+{% block content %}
+
+<!-- ================= PRODUCT DETAIL ================= -->
+<section class="product-detail">
+
+    <div class="product-detail-grid">
+
+        <!-- ============ IMAGE GALLERY ============ -->
+        <div class="product-gallery">
+
+            <div class="gallery-main">
+                <button class="gallery-btn prev" onclick="changeImage(-1)">‹</button>
+
+                <img id="mainImage"
+                     src="{{ single_product.images.url }}"
+                     alt="{{ single_product.product_name }}">
+
+                <button class="gallery-btn next" onclick="changeImage(1)">›</button>
+            </div>
+
+            <div class="gallery-thumbs">
+
+                <!-- MAIN IMAGE THUMB -->
+                <img src="{{ single_product.images.url }}"
+                     class="thumb active"
+                     onclick="setImage(this)">
+
+                <!-- GALLERY IMAGES -->
+                {% for img in product_gallery %}
+                <img src="{{ img.image.url }}"
+                     class="thumb"
+                     onclick="setImage(this)">
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        <!-- ============ PRODUCT INFO ============ -->
+        <div class="product-info">
+
+            <h2>{{ single_product.product_name }}</h2>
+
+            <!-- CLEAN MODERN PRICE -->
+            <div class="price-box">
+                {% if single_product.discount_percent > 0 %}
+                    <span class="discount-price">
+                        ₹{{ single_product.get_final_price }}
+                    </span>
+                    <span class="original-price">
+                        ₹{{ single_product.price }}
+                    </span>
+                    <span class="percent-text">
+                        {{ single_product.discount_percent }}% off
+                    </span>
+                {% else %}
+                    <span class="normal-price">
+                        ₹{{ single_product.price }}
+                    </span>
+                {% endif %}
+            </div>
+
+            {% if single_product.stock == 0 %}
+                <p class="stock-label out">Out of Stock</p>
+
+            {% elif single_product.stock == 1 %}
+                <p class="stock-label one">Only 1 item left</p>
+
+            {% elif single_product.stock <= 5 %}
+                <p class="stock-label low">
+                    Only {{ single_product.stock }} left
+                </p>
+            {% endif %}
+
+            <p class="description">
+                {{ single_product.description }}
+            </p>
+
+            {% if single_product.stock == 0 %}
+                <button class="add-to-cart-btn disabled" disabled>
+                    Out of Stock
+                </button>
+            {% else %}
+                <a href="{% url 'add_cart' single_product.id %}"
+                class="add-to-cart-btn">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Add to Cart</span>
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= RELATED PRODUCTS ================= -->
+<section class="related-products">
+
+    <h3 class="section-title">You may also like</h3>
+
+    <div class="product-grid">
+
+        {% for product in related_products %}
+        <div class="product-item">
+
+            <a href="{{ product.get_url }}" class="product-card">
+                <img src="{{ product.images.url }}"
+                     alt="{{ product.product_name }}">
+            </a>
+
+            <div class="product-meta">
+                <h4>{{ product.product_name }}</h4>
+
+                <div class="price-box">
+                    {% if product.discount_percent > 0 %}
+                        <span class="discount-price">
+                            ₹{{ product.get_final_price }}
+                        </span>
+                        <span class="original-price">
+                            ₹{{ product.price }}
+                        </span>
+                        <span class="percent-text">
+                            {{ product.discount_percent }}% off
+                        </span>
+                    {% else %}
+                        <span class="normal-price">
+                            ₹{{ product.price }}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        {% empty %}
+        <p style="text-align:center;">No related products found.</p>
+        {% endfor %}
+
+    </div>
+
+</section>
+
+<!-- ================= GALLERY SCRIPT ================= -->
+<script>
+    const thumbs = document.querySelectorAll('.thumb');
+    const mainImage = document.getElementById('mainImage');
+    let currentIndex = 0;
+
+    function setImage(el) {
+        thumbs.forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        mainImage.src = el.src;
+        currentIndex = [...thumbs].indexOf(el);
+    }
+
+    function changeImage(step) {
+        currentIndex += step;
+
+        if (currentIndex < 0) currentIndex = thumbs.length - 1;
+        if (currentIndex >= thumbs.length) currentIndex = 0;
+
+        setImage(thumbs[currentIndex]);
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | Dania Beauty{% endblock %}
+
+{% block content %}
+
+<section class="about-section">
+    <div class="about-content">
+
+        {% if about_page %}
+
+            <h1 class="page-title">{{ about_page.title }}</h1>
+
+            {% if about_page.hero_image %}
+            <div class="about-image">
+                <img src="{{ about_page.hero_image.url }}" 
+                     alt="About Dania Beauty">
+            </div>
+            {% endif %}
+
+            <p>{{ about_page.paragraph_1 }}</p>
+            <p>{{ about_page.paragraph_2 }}</p>
+            <p>{{ about_page.paragraph_3 }}</p>
+
+            <a href="{% url 'store' %}" class="btn primary">
+                {{ about_page.button_text }}
+            </a>
+
+        {% else %}
+
+            <h1 class="page-title">About Dania Beauty</h1>
+            <p>Content coming soon.</p>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

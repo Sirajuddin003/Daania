@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us | Daania Beauty{% endblock %}
+
+{% block content %}
+<section class="contact">
+
+    <!-- ===============================
+         PAGE HEADER
+    =============================== -->
+    {% if contact_page %}
+        <h2 class="page-title">{{ contact_page.title }}</h2>
+        <p class="page-subtitle">
+            {{ contact_page.subtitle }}
+        </p>
+    {% else %}
+        <h2 class="page-title">Contact Us</h2>
+        <p class="page-subtitle">
+            We’re here to help. Reach out to us anytime.
+        </p>
+    {% endif %}
+
+    <!-- ===============================
+         SUCCESS MESSAGES
+    =============================== -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="contact-alert success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="contact-grid">
+
+        <!-- ===============================
+             CONTACT INFORMATION
+        =============================== -->
+        <div class="contact-info">
+            <h3>Contact Information</h3>
+
+            {% if contact_page %}
+                <p><strong>Email:</strong> {{ contact_page.email }}</p>
+                <p><strong>Phone:</strong> {{ contact_page.phone }}</p>
+                <p><strong>Address:</strong> {{ contact_page.address }}</p>
+
+                <!-- WHATSAPP BUTTON (ONLY HERE) -->
+                {% if contact_page.is_whatsapp_enabled and contact_page.whatsapp_number %}
+                    <a href="https://wa.me/{{ contact_page.whatsapp_number }}?text={{ contact_page.whatsapp_message|urlencode }}"
+                       class="whatsapp-contact-btn"
+                       target="_blank"
+                       aria-label="Chat on WhatsApp">
+                       <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                {% endif %}
+            {% else %}
+                <p>Contact details will be updated soon.</p>
+            {% endif %}
+        </div>
+
+        <!-- ===============================
+             CONTACT FORM
+        =============================== -->
+        <form method="POST" action="{% url 'contact' %}" class="contact-form">
+            {% csrf_token %}
+
+            <input type="text" name="name" placeholder="Your Name" required>
+
+            <input type="email" name="email" placeholder="Your Email" required>
+
+            <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+
+            <button type="submit" class="btn primary">
+                Send Message
+            </button>
+        </form>
+
+    </div>
+
+</section>
+{% endblock %}

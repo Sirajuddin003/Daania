@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-wrapper">
+  <div class="account-box">
+    <h2 class="account-title">Create Account</h2>
+
+    {% include 'includes/alerts.html' %}
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }} 
+      <button class="btn-primary">Register</button>
+      <div class="auth-links">
+        <span>Already have an account?
+          <a href="{% url 'login' %}">Login</a>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

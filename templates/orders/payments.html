@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="payment-section">
+
+  <h2 class="page-title">Review & Payment</h2>
+
+  <div class="payment-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="payment-left">
+
+      <div class="payment-card">
+        <h3>Billing Address</h3>
+        <p>{{ order.full_name }}</p>
+        <p>{{ order.full_address }}</p>
+        <p>{{ order.city }}, {{ order.state }}</p>
+        <p>{{ order.country }}</p>
+        <p>{{ order.email }}</p>
+        <p>{{ order.phone }}</p>
+      </div>
+
+      <div class="payment-card">
+        <h3>Products</h3>
+
+        {% for cart_item in cart_items %}
+          <div class="product-row">
+            <img src="{{ cart_item.product.images.url }}" alt="">
+
+            <div class="product-info">
+              <strong>{{ cart_item.product.product_name }}</strong>
+
+              <small>
+                {% for v in cart_item.variations.all %}
+                  {{ v.variation_category|capfirst }}:
+                  {{ v.variation_value|capfirst }}<br>
+                {% endfor %}
+              </small>
+
+              <!-- PER ITEM PRICE -->
+                <div class="each-price-box">
+                  {% if cart_item.product.discount_percent > 0 %}
+                      <span class="discount-each">
+                        ₹{{ cart_item.product.get_final_price }}
+                      </span>
+
+                      <span class="original-each">
+                        ₹{{ cart_item.product.price }}
+                      </span>
+
+                      <span class="percent-text">
+                        {{ cart_item.product.discount_percent }}% off
+                      </span>
+                  {% else %}
+                      <span class="normal-each">
+                        ₹{{ cart_item.product.price }}
+                      </span>
+                  {% endif %}
+                </div>
+            </div>
+
+            <span class="qty">x{{ cart_item.quantity }}</span>
+
+            <!-- SUBTOTAL -->
+            <span class="price">₹{{ cart_item.sub_total }}</span>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="payment-right">
+
+      <div class="payment-card summary-card">
+        <div class="summary-line">
+          <span>Total</span><span>₹{{ total }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Tax</span><span>₹{{ tax }}</span>
+        </div>
+        <div class="summary-line grand">
+          <span>Grand Total</span><span>₹{{ grand_total }}</span>
+        </div>
+
+        <!-- PAYMENT METHOD -->
+        <div class="payment-methods-grid">
+          <div class="pay-tile active" data-method="razorpay">
+            <img src="{% static 'images/payments/razorpay.png' %}" alt="Razorpay">
+          </div>
+        </div>
+
+        <!-- PAY BUTTON -->
+        <button id="payNowBtn" class="pay-now-btn">
+          Pay ₹{{ grand_total }}
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- RAZORPAY SCRIPT -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  let selectedMethod = "razorpay";
+
+  document.querySelectorAll(".pay-tile").forEach(tile => {
+    tile.addEventListener("click", () => {
+      document.querySelectorAll(".pay-tile")
+        .forEach(t => t.classList.remove("active"));
+
+      tile.classList.add("active");
+      selectedMethod = tile.dataset.method;
+    });
+  });
+
+  const payBtn = document.getElementById("payNowBtn");
+
+  payBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (selectedMethod !== "razorpay") return;
+
+    var options = {
+      key: "{{ razorpay_key }}",
+      amount: "{{ amount }}",   // in paise
+      currency: "INR",
+      name: "GlowLuxe",
+      description: "Order Payment",
+      order_id: "{{ razorpay_order_id }}",
+
+      handler: function (response) {
+
+        fetch("{% url 'razorpay_verify' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify(response)
+        })
+        .then(res => res.json())
+        .then(data => {
+          window.location.href =
+            "{% url 'order_complete' %}" +
+            "?order_number=" + data.order_number +
+            "&payment_id=" + data.payment_id;
+        });
+      },
+
+      theme: {
+        color: "#000000"
+      }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
+  });
+
+});
+</script>
+
+{% endblock %}

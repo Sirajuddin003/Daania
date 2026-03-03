@@ -1,0 +1,51 @@
+<footer class="footer">
+    <div class="footer-container">
+
+        <!-- Brand + Social -->
+        <div class="footer-brand">
+            <h2>Daania.</h2>
+
+            <div class="footer-socials">
+                <a href="#"><i class="ri-instagram-line"></i></a>
+                <a href="#"><i class="ri-facebook-fill"></i></a>
+                <a href="#"><i class="ri-whatsapp-fill"></i></a>
+            </div>
+        </div>
+
+        <!-- Column 1 -->
+        <div class="footer-col">
+            <h4>About Us</h4>
+            <a href="{% url 'home' %}">New & Featured</a>
+            <a href="#">Best Seller</a>
+            <a href="{% url 'store' %}">Store</a>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="footer-col">
+            <h4>Maybe Help You?</h4>
+            <a href="{% url 'contact' %}">Contact Us</a>
+            <a href="{% url 'my_orders' %}">My Order</a>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="footer-col">
+            <h4>Support</h4>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms & Condition</a>
+        </div>
+
+        <!-- CTA -->
+        <div class="footer-cta">
+            <h3>Have a Question<br>To Our Products?</h3>
+            <a href="{% url 'contact' %}" class="footer-btn">
+                Send Email →
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Bottom -->
+    <div class="footer-bottom">
+        Daania ©2025 All Rights Reserved
+    </div>
+</footer>

@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Daania Beauty{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- FontAwesome (For WhatsApp Icon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    {% include 'includes/navbar.html' %}
+
+    {% block content %}{% endblock %}
+
+    {% include 'includes/footer.html' %}
+
+
+    <!-- ===============================
+         SITE MESSAGES (INSIDE BODY)
+    =============================== -->
+    {% if messages %}
+    <div class="site-messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ===============================
+         MAIN JS FILE
+    =============================== -->
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- ===============================
+         SEARCH CONTROLLER
+    =============================== -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const toggle = document.querySelector(".search-toggle");
+        const inlineForm = document.querySelector(".nav-search-form");
+        const popup = document.getElementById("searchPopup");
+
+        if (!toggle || !inlineForm || !popup) return;
+
+        const isDesktop = () =>
+            window.matchMedia("(pointer: fine)").matches;
+
+        toggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isDesktop()) {
+                inlineForm.classList.toggle("active");
+                popup.classList.remove("active");
+            } else {
+                popup.classList.toggle("active");
+                inlineForm.classList.remove("active");
+
+                setTimeout(() => {
+                    const input = popup.querySelector("input");
+                    if (input) input.focus();
+                }, 150);
+            }
+        });
+
+        document.addEventListener("click", (e) => {
+            if (
+                popup.classList.contains("active") &&
+                !e.target.closest(".search-popup") &&
+                !e.target.closest(".nav-search")
+            ) {
+                popup.classList.remove("active");
+            }
+        });
+
+    });
+    </script>
+
+    <!-- ===============================
+         FILTER DROPDOWN SCRIPT
+    =============================== -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const dropdowns = document.querySelectorAll(".filter-dropdown");
+        if (!dropdowns.length) return;
+
+        dropdowns.forEach(dropdown => {
+            const trigger = dropdown.querySelector(".filter-trigger");
+            const menu = dropdown.querySelector(".filter-menu");
+
+            trigger.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove("open");
+                });
+
+                dropdown.classList.toggle("open");
+            });
+
+            menu.addEventListener("click", (e) => {
+                e.stopPropagation();
+            });
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!e.target.closest(".filter-dropdown")) {
+                dropdowns.forEach(d => d.classList.remove("open"));
+            }
+        });
+
+    });
+    </script>
+
+    <!-- ===============================
+         PRODUCT SLIDER SCRIPT
+    =============================== -->
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        document.querySelectorAll(".product-slider-wrapper").forEach(slider => {
+
+            const track = slider.querySelector(".product-grid.horizontal-scroll");
+            const btnLeft = slider.querySelector(".slider-btn.left");
+            const btnRight = slider.querySelector(".slider-btn.right");
+
+            if (!track || !btnLeft || !btnRight) return;
+
+            const scrollAmount = () => {
+                const item = track.querySelector(".product-item");
+                return item ? item.offsetWidth + 48 : 300;
+            };
+
+            btnRight.addEventListener("click", () => {
+                track.scrollBy({
+                    left: scrollAmount(),
+                    behavior: "smooth"
+                });
+            });
+
+            btnLeft.addEventListener("click", () => {
+                track.scrollBy({
+                    left: -scrollAmount(),
+                    behavior: "smooth"
+                });
+            });
+
+        });
+
+    });
+    </script>
+
+    <!-- ===============================
+         AUTO-HIDE MESSAGES
+    =============================== -->
+    <script>
+    setTimeout(() => {
+        document.querySelectorAll('.site-messages .alert').forEach(alert => {
+            alert.classList.add('hide');
+            setTimeout(() => alert.remove(), 300);
+        });
+    }, 3000);
+    </script>
+
+</body>
+</html>

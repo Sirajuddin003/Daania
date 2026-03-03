@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Checkout | GlowLuxe{% endblock %}
+
+{% block content %}
+<section class="checkout-section">
+
+  <div class="checkout-container">
+
+    <!-- LEFT : BILLING -->
+    <div class="checkout-card">
+      <h3 class="card-title">Billing Address</h3>
+
+      <form action="{% url 'place_order' %}" method="POST" class="checkout-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="first_name" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="text" name="phone" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Address Line 1</label>
+            <input type="text" name="address_line_1" required>
+          </div>
+          <div class="form-group">
+            <label>Address Line 2</label>
+            <input type="text" name="address_line_2">
+          </div>
+        </div>
+
+        <div class="form-row three">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" name="city" required>
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" name="state" required>
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" name="country" required>
+          </div>
+        </div>
+    </div>
+
+ <!-- RIGHT : ORDER SUMMARY -->
+    <div class="checkout-card">
+      <h3 class="card-title">Your Order</h3>
+
+      <div class="order-table">
+
+        {% for cart_item in cart_items %}
+        <div class="order-item">
+
+          <img src="{{ cart_item.product.images.url }}" alt="{{ cart_item.product.product_name }}">
+
+          <div class="order-info">
+            <h4>{{ cart_item.product.product_name }}</h4>
+
+            <p class="variation">
+              {% for item in cart_item.variations.all %}
+                {{ item.variation_category|capfirst }}:
+                {{ item.variation_value|capfirst }}<br>
+              {% endfor %}
+            </p>
+
+            <!-- FIXED META -->
+            <div class="order-meta">
+                <span>Qty: {{ cart_item.quantity }}</span>
+
+                <div class="each-price-box">
+                  {% if cart_item.product.discount_percent > 0 %}
+                      <span class="discount-each">
+                        ₹{{ cart_item.product.get_final_price }}
+                      </span>
+
+                      <span class="original-each">
+                        ₹{{ cart_item.product.price }}
+                      </span>
+
+                      <span class="percent-text">
+                        {{ cart_item.product.discount_percent }}% off
+                      </span>
+                  {% else %}
+                      <span class="normal-each">
+                        ₹{{ cart_item.product.price }}
+                      </span>
+                  {% endif %}
+                </div>
+            </div>
+          </div>
+
+          <!-- ONLY SUBTOTAL HERE -->
+          <div class="order-price">
+            ₹{{ cart_item.sub_total }}
+          </div>
+
+        </div>
+        {% endfor %}
+
+      </div>
+
+      <button type="submit" class="btn-primary">Place Order</button>
+      <a href="{% url 'store' %}" class="btn-secondary">Continue Shopping</a>
+
+    </div>
+
+
+  </div>
+</section>
+{% endblock %}

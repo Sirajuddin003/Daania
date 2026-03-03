@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Complete | Daania{% endblock %}
+
+{% block content %}
+<section class="order-complete-section">
+
+  <!-- ================= SUCCESS HEADER ================= -->
+  <div class="order-success">
+      <div class="success-icon">✓</div>
+      <h2>Payment Successful</h2>
+      <p>Your order has been placed successfully.</p>
+      <a href="{% url 'store' %}" class="continue-btn">
+          Continue Shopping
+      </a>
+  </div>
+
+
+  <!-- ================= INVOICE CARD ================= -->
+  <div class="invoice-card">
+
+      <!-- HEADER -->
+      <div class="invoice-header">
+          <div class="brand">
+              <h2>Daania</h2>
+              <p>Premium Skincare</p>
+          </div>
+
+          <div class="invoice-details">
+              <p><strong>Order #:</strong> {{ order_number }}</p>
+              <p><strong>Date:</strong> {{ order.created_at|date:"d M Y" }}</p>
+              <p><strong>Transaction:</strong> {{ transID }}</p>
+              <p>
+                <strong>Status:</strong>
+                {% if payment.status %}
+                  <span class="paid">Paid</span>
+                {% else %}
+                  <span class="pending">Pending</span>
+                {% endif %}
+              </p>
+          </div>
+      </div>
+
+
+      <!-- BILLING -->
+      <div class="billing-section">
+          <h4>Billing Address</h4>
+          <p>{{ order.full_name }}</p>
+          <p>{{ order.full_address }}</p>
+          <p>{{ order.city }}, {{ order.state }}</p>
+          <p>{{ order.country }}</p>
+          <p>{{ order.email }}</p>
+          <p>{{ order.phone }}</p>
+      </div>
+
+
+      <!-- PRODUCTS TABLE -->
+      <div class="invoice-table-wrapper">
+          <table class="invoice-table">
+
+              <thead>
+                  <tr>
+                      <th>Product</th>
+                      <th>Qty</th>
+                      <th>Price</th>
+                      <th>Total</th>
+                  </tr>
+              </thead>
+
+              <tbody>
+                  {% for item in ordered_products %}
+                  <tr>
+
+                      <td>
+                          {{ item.product.product_name }}
+                          {% if item.variations.all %}
+                          <div class="variation-info">
+                              {% for v in item.variations.all %}
+                                  {{ v.variation_category|capfirst }}:
+                                  {{ v.variation_value|capfirst }}<br>
+                              {% endfor %}
+                          </div>
+                          {% endif %}
+                      </td>
+
+                      <td>{{ item.quantity }}</td>
+
+                      <!-- STORED PRICE -->
+                      <td>₹{{ item.product_price }}</td>
+
+                      <!-- TOTAL -->
+                      <td>
+                        ₹{{ item.product_price|add:0|floatformat:2 }}
+                      </td>
+
+                  </tr>
+                  {% endfor %}
+              </tbody>
+
+              <tfoot>
+                  <tr>
+                      <td colspan="3">Subtotal</td>
+                      <td>₹{{ subtotal }}</td>
+                  </tr>
+
+                  <tr>
+                      <td colspan="3">Tax</td>
+                      <td>₹{{ order.tax }}</td>
+                  </tr>
+
+                  <tr class="grand-total">
+                      <td colspan="3">Grand Total</td>
+                      <td>₹{{ order.order_total }}</td>
+                  </tr>
+              </tfoot>
+
+          </table>
+      </div>
+
+      <div class="invoice-footer">
+          Thank you for shopping with <strong>Daania</strong> 🌿  
+          We appreciate your trust in our skincare.
+      </div>
+
+  </div>
+
+</section>
+{% endblock %}

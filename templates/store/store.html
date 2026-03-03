@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Store | GlowLuxe{% endblock %}
+
+{% block content %}
+<section class="store">
+
+    <h2 class="page-title">Our Products</h2>
+
+<!-- ================= FILTER BAR ================= -->
+<form method="get" class="filter-bar">
+
+  <!-- CATEGORY -->
+  <div class="filter-dropdown">
+    <button type="button" class="filter-trigger">
+      Categories <span>▾</span>
+    </button>
+
+    <div class="filter-menu">
+      <a href="{% url 'store' %}"
+         class="{% if not request.GET.category %}active{% endif %}">
+        All Products
+      </a>
+
+      {% for category in categories %}
+      <a href="?category={{ category.slug }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}"
+         class="{% if request.GET.category == category.slug %}active{% endif %}">
+        {{ category.category_name }}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- PRICE -->
+  <div class="filter-dropdown">
+    <button type="button" class="filter-trigger">
+      Price <span>▾</span>
+    </button>
+
+    <div class="filter-menu price-menu">
+      <input type="number" name="min_price" placeholder="Min ₹"
+             value="{{ request.GET.min_price }}">
+      <input type="number" name="max_price" placeholder="Max ₹"
+             value="{{ request.GET.max_price }}">
+      <button type="submit" class="apply-btn">Apply</button>
+    </div>
+  </div>
+
+</form>
+
+
+    <!-- ================= PRODUCTS ================= -->
+<div class="product-grid">
+
+    {% for product in products %}
+    <div class="product-item">
+
+        <a href="{{ product.get_url }}" class="product-card">
+            <img src="{{ product.images.url }}" alt="{{ product.product_name }}">
+        </a>
+
+        <div class="product-meta">
+            <h4>{{ product.product_name }}</h4>
+
+                        <div class="price-box">
+                            {% if product.discount_percent > 0 %}
+                                <span class="discount-price">₹{{ product.get_final_price }}</span>
+                                <span class="original-price">₹{{ product.price }}</span>
+                                <span class="percent-text">{{ product.discount_percent }}% off</span>
+                            {% else %}
+                                <span class="normal-price">₹{{ product.price }}</span>
+                            {% endif %}
+                        </div>
+
+            {% if product.stock == 0 %}
+                <span class="stock out">Out of Stock</span>
+            {% elif product.stock <= 5 %}
+                <span class="stock low">Only {{ product.stock }} left</span>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+    <!-- ================= PAGINATION ================= -->
+    {% if products.has_other_pages %}
+    <div class="pagination">
+
+        {% if products.has_previous %}
+        <a class="page-btn"
+           href="?page={{ products.previous_page_number }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">
+            ‹ Prev
+        </a>
+        {% endif %}
+
+        {% for i in products.paginator.page_range %}
+            {% if products.number == i %}
+                <span class="page-btn active">{{ i }}</span>
+            {% elif i > products.number|add:'-2' and i < products.number|add:'2' %}
+                <a class="page-btn"
+                   href="?page={{ i }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">
+                    {{ i }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if products.has_next %}
+        <a class="page-btn"
+           href="?page={{ products.next_page_number }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">
+            Next ›
+        </a>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}

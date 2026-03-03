@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cart | GlowLuxe{% endblock %}
+
+{% block content %}
+<section class="cart">
+    <div class="cart-container">
+
+        <h2 class="page-title1">Your Cart</h2>
+
+        {% if cart_items %}
+
+        <div class="cart-list">
+            {% for item in cart_items %}
+            <div class="cart-item">
+
+                <!-- PRODUCT IMAGE -->
+                <div class="cart-image">
+                    <img src="{{ item.product.images.url }}"
+                         alt="{{ item.product.product_name }}">
+                </div>
+
+                <!-- PRODUCT DETAILS -->
+                <div class="cart-details">
+                    <h4>{{ item.product.product_name }}</h4>
+
+                    <div class="each-price-box">
+                        {% if item.product.discount_percent > 0 %}
+                            <span class="discount-each">₹{{ item.product.get_final_price }}</span>
+                            <span class="original-each">₹{{ item.product.price }}</span>
+                            <span class="percent-text">{{ item.product.discount_percent }}% off</span>
+                        {% else %}
+                            <span class="normal-each">₹{{ item.product.price }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- QUANTITY + REMOVE -->
+                    <div class="cart-actions">
+
+                        <div class="qty-box">
+
+                            <!-- DECREASE -->
+                            <a href="{% url 'remove_cart' item.product.id item.id %}"
+                               class="qty-btn">
+                                −
+                            </a>
+
+                            <span class="qty-number">{{ item.quantity }}</span>
+
+                            <!-- INCREASE -->
+                            {% if item.quantity < item.product.stock %}
+                                <a href="{% url 'add_cart' item.product.id %}"
+                                   class="qty-btn">
+                                    +
+                                </a>
+                            {% else %}
+                                <span class="qty-btn disabled"
+                                      title="Maximum stock reached">
+                                    +
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- STOCK TEXT -->
+                        {% if item.product.stock == 1 %}
+                            <p class="stock-text one">
+                                Only 1 item in stock
+                            </p>
+                        {% elif item.product.stock <= 5 %}
+                            <p class="stock-text low">
+                                Only {{ item.product.stock }} left
+                            </p>
+                        {% endif %}
+
+                        <!-- REMOVE -->
+                        <a href="{% url 'remove_cart_item' item.product.id item.id %}"
+                           class="remove-btn">
+                            Remove
+                        </a>
+
+                    </div>
+                </div>
+
+                <!-- SUB TOTAL -->
+                <div class="cart-total-price">
+                    ₹{{ item.sub_total }}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CART SUMMARY -->
+        <div class="cart-summary">
+            <h3>Total: ₹{{ total }}</h3>
+            <a href="{% url 'checkout' %}" class="btn primary">
+                Proceed to Checkout
+            </a>
+        </div>
+
+        {% else %}
+
+        <!-- EMPTY CART -->
+        <div class="empty-cart-box">
+            <div class="empty-cart-icon">
+                <i class="ri-shopping-cart-line"></i>
+            </div>
+
+            <h3>Your cart is empty</h3>
+            <p>
+                Looks like you haven’t added anything yet.<br>
+                Explore our products and find something you love.
+            </p>
+
+            <a href="{% url 'store' %}" class="btn primary">
+                Continue Shopping
+            </a>
+        </div>
+
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

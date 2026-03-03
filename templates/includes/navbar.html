@@ -1,0 +1,70 @@
+<nav class="navbar">
+    <div class="nav-container">
+
+        <!-- LOGO -->
+        <a href="{% url 'home' %}" class="logo">
+            DAANIA.
+        </a>
+
+        <!-- NAV LINKS -->
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">New & Featured</a></li>
+            <li><a href="{% url 'store' %}">Store</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+
+        <!-- ICONS -->
+        <div class="nav-icons">
+
+            <!-- SEARCH -->
+            <div class="nav-search">
+                <!-- Inline expanding search (Desktop) -->
+                <form action="{% url 'store' %}" method="get" class="nav-search-form">
+                    <input
+                        type="text"
+                        name="keyword"
+                        placeholder="Search products..."
+                    >
+                    <button type="submit" class="search-btn" aria-label="Search">
+                        <i class="ri-search-line"></i>
+                    </button>
+                </form>
+
+                <!-- Search toggle icon (button must have type="button") -->
+                <button type="button" class="nav-icon search-toggle" aria-label="Open search">
+                    <i class="ri-search-line"></i>
+                </button>
+            </div>
+
+            <!-- USER -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="nav-icon">
+                    <i class="ri-user-line"></i>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-icon">
+                    <i class="ri-user-line"></i>
+                </a>
+            {% endif %}
+
+            <!-- CART -->
+            <a href="{% url 'cart' %}" class="nav-icon cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-count">{{ cart_count }}</span>
+            </a>
+
+        </div>
+
+    </div>
+</nav>
+
+<!-- Floating Search (Mobile + Tablet) -->
+<div class="search-popup" id="searchPopup">
+    <form action="{% url 'store' %}" method="get" class="search-popup-form">
+        <input type="text" name="keyword" placeholder="Search products...">
+        <button type="submit">
+            <i class="ri-search-line"></i>
+        </button>
+    </form>
+</div>

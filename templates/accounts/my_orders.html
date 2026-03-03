@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-wrapper dashboard-layout">
+
+  {% include 'includes/dashboard_sidebar.html' %}
+
+  <div class="dashboard-content">
+    <h2>My Orders</h2>
+    <p class="account-subtitle">Track all your recent orders</p>
+
+    <div class="orders-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Products</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for order in orders %}
+          <tr>
+
+            <!-- ORDER NUMBER -->
+            <td class="order-number">
+              #{{ order.order_number }}
+            </td>
+
+            <!-- PRODUCTS (MULTIPLE) -->
+            <td class="order-products">
+              {% for item in order.orderproduct_set.all %}
+              <div class="order-product">
+                <img src="{{ item.product.images.url }}" alt="{{ item.product.product_name }}">
+                <span>{{ item.product.product_name }}</span>
+              </div>
+              {% endfor %}
+            </td>
+
+            <!-- DATE -->
+            <td>
+              {{ order.created_at|date:"M d, Y" }}
+            </td>
+
+            <!-- TOTAL -->
+            <td class="order-total">
+              ₹{{ order.order_total }}
+            </td>
+
+            <!-- STATUS -->
+            <td class="order-status">
+              <span class="status completed">{{ order.status }}</span>
+            </td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

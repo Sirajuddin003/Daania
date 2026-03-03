@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Dania Beauty{% endblock %}
+
+{% block content %}
+
+{% if homepage %}
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-inner">
+
+        <div class="hero-left">
+            <h2>{{ homepage.hero_title|linebreaksbr }}</h2>
+
+            <p class="hero-desc">
+                {{ homepage.hero_description }}
+            </p>
+
+            <div class="hero-buttons">
+                <a href="{% url 'store' %}" class="btn primary">Shop Now</a>
+                <a href="{% url 'contact' %}" class="btn outline">Contact Us</a>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            {% if homepage.hero_image %}
+            <div class="hero-blob">
+                <img src="{{ homepage.hero_image.url }}" 
+                     alt="Dania Beauty Cream Main Image">
+            </div>
+            {% endif %}
+
+            {% if homepage.hero_mini_image %}
+            <div class="hero-mini">
+                <img src="{{ homepage.hero_mini_image.url }}" 
+                     alt="Dania Beauty Cream Mini Image">
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+<!-- PRODUCTS SECTION -->
+<section class="products">
+
+    {% if homepage %}
+    <h3 class="section-title">{{ homepage.products_title }}</h3>
+    <p class="section-subtitle">{{ homepage.products_subtitle }}</p>
+    {% endif %}
+
+    <div class="product-slider-wrapper">
+
+        <button class="slider-btn left">&#10094;</button>
+
+        <div class="product-grid horizontal-scroll">
+            {% if products %}
+                {% for product in products %}
+                <div class="product-item">
+
+                    <div class="product-card">
+                        <a href="{{ product.get_url }}">
+                            <img src="{{ product.images.url }}" 
+                                 alt="{{ product.product_name }}">
+                        </a>
+                    </div>
+
+                    <div class="product-meta">
+                        <h4>{{ product.product_name }}</h4>
+
+                        <div class="price-box">
+                            {% if product.discount_percent > 0 %}
+                                <span class="discount-price">₹{{ product.get_final_price }}</span>
+                                <span class="original-price">₹{{ product.price }}</span>
+                                <span class="percent-text">{{ product.discount_percent }}% off</span>
+                            {% else %}
+                                <span class="normal-price">₹{{ product.price }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No products available right now.</p>
+            {% endif %}
+        </div>
+
+        <button class="slider-btn right">&#10095;</button>
+
+    </div>
+</section>
+
+<!-- INGREDIENTS SECTION -->
+{% if ingredients %}
+<section class="ingredients">
+    <div class="ingredients-grid">
+        {% for ingredient in ingredients %}
+        <div class="ingredient-card">
+            <img src="{{ ingredient.image.url }}" 
+                 alt="{{ ingredient.name }}">
+            <div class="ingredient-text">
+                <h4>{{ ingredient.name }}</h4>
+                <p>{{ ingredient.description }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- FEATURE SECTION -->
+{% if homepage %}
+<section class="feature-hero">
+    <div class="feature-inner">
+
+        <div class="feature-content">
+            <h2>{{ homepage.feature_title|linebreaksbr }}</h2>
+
+            <div class="discount-badge">
+                <span>Up to</span>
+                <strong>{{ homepage.feature_discount_text }}</strong>
+                <span>Discount</span>
+            </div>
+        </div>
+
+        <div class="feature-visual">
+
+            {% if homepage.feature_image %}
+            <div class="image-oval">
+                <img src="{{ homepage.feature_image.url }}" 
+                     alt="Special Offer Dania Beauty Cream">
+            </div>
+            {% endif %}
+
+            <p class="feature-text">
+                {{ homepage.feature_description }}
+            </p>
+
+            <div class="feature-buttons">
+                <a href="{% url 'store' %}" class="btn primary">Shop Now</a>
+                <a href="{% url 'contact' %}" class="btn outline">Contact Us</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+<!-- INGREDIENT HERO SECTION -->
+{% if homepage %}
+<section class="ingredients-hero">
+    <div class="ingredients-container">
+
+        <div class="ingredients-left">
+            <h2>{{ homepage.ingredient_hero_title|linebreaksbr }}</h2>
+
+            <p class="ingredients-desc">
+                {{ homepage.ingredient_hero_description }}
+            </p>
+        </div>
+
+        <div class="ingredients-image">
+            {% if homepage.ingredient_hero_image %}
+            <img src="{{ homepage.ingredient_hero_image.url }}" 
+                 alt="Natural Ingredients Dania Beauty">
+            {% endif %}
+            <span class="orbit"></span>
+        </div>
+
+        <div class="ingredients-stats">
+            <div class="stat">
+                <h3>{{ homepage.stat_customers }}</h3>
+                <p>Happy Customers</p>
+            </div>
+
+            <div class="stat">
+                <h3>{{ homepage.stat_products }}</h3>
+                <p>Products Sold</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+<!-- FOLLOW SECTION -->
+{% if follow_images %}
+<section class="follow-glowluxe">
+    <div class="follow-container">
+
+        {% if homepage %}
+        <h2>{{ homepage.follow_title }}</h2>
+        {% endif %}
+
+        <div class="oval-gallery">
+            {% for image in follow_images %}
+            <div class="oval-item">
+                <img src="{{ image.image.url }}" 
+                     alt="Dania Beauty Instagram Gallery">
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

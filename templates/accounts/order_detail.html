@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="account-wrapper">
+  <div class="account-box">
+    <h2>Order {{ order.order_number }}</h2>
+
+    <p>Total: ₹{{ order.order_total }}</p>
+    <p>Status: {{ order.status }}</p>
+  </div>
+</div>
+{% endblock %}
